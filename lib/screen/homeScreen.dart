@@ -14,7 +14,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer2<Products, Cart>(
-      builder: (context, product, cart, child) => SafeArea(
+      builder: (context, product, cart, child) {
+          product.fetchAllProduct();
+         return SafeArea(
         child: Scaffold(
           appBar: AppBar(
             title: Text("View Products"),
@@ -63,7 +65,7 @@ class HomeScreen extends StatelessWidget {
                                           onPressed: () {
 
                                             //need validate number
-                                            if (codeCtrl.text.isEmpty||priceCtrl.text.isEmpty||nameCtrl.text.isEmpty) {
+                                            if (codeCtrl.text.isEmpty||priceCtrl.text.isEmpty||nameCtrl.text.isEmpty||!RegExp(r'\d').hasMatch(priceCtrl.text)) {
                                               ScaffoldMessenger.of(context)
                                                   .hideCurrentSnackBar();
                                               ScaffoldMessenger.of(context)
@@ -94,12 +96,15 @@ class HomeScreen extends StatelessWidget {
             child: ListView.builder(
               itemCount: product.items.length,
               itemBuilder: (BuildContext context, int index) {
+               
                 return Card(
                   child: ListTile(
                     leading: IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.favorite_border_outlined)),
-                    title: Text("hello"),
+                        onPressed: () {
+                          product.faveIt(product.items[index]);
+                        },
+                        icon: product.items[index].isFav ? Icon(Icons.favorite_border_outlined) : Icon(Icons.favorite)),
+                    title: Text(product.items[index].name),
                     trailing: IconButton(
                         onPressed: () {},
                         icon: Icon(Icons.shopping_cart_outlined)),
@@ -109,7 +114,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
         ),
-      ),
+      );},
     );
   }
 }
